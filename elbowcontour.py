@@ -1,6 +1,8 @@
 import cv2 as cv
 import numpy as np
 
+from time import time
+
 def rescale_frame(frame, scale=0.75):
     width = int(frame.shape[1] * scale)
     height = int(frame.shape[0] * scale)
@@ -8,6 +10,7 @@ def rescale_frame(frame, scale=0.75):
 
     return cv.resize(frame, dimensions, interpolation=cv.INTER_AREA)
 
+start = time()
 
 img = cv.imread('Pictures/pointing3.jpg')
 cv.imshow('Image', img)
@@ -74,7 +77,7 @@ for contour in contours:
                 pointsInContour.append(point[0])
         else:
             prevPoint -= 1
-    
+
     finalPoints = []
     if lowest[0] != 0 and lowest[1] != 0:
         finalPoints.append(lowest)
@@ -92,5 +95,8 @@ for point in bottomPoints:
 print(f'Length of Array: {len(bottomPoints)}')
 
 cv.imshow('Contours', blank)
+
+end = time()
+print(f'Time: {(end - start):0.5f}s')
 
 cv.waitKey(0)
