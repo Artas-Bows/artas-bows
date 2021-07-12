@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 from operator import itemgetter
 
-img = cv.imread('Picture/pointing3.jpg')
+img = cv.imread('Pictures/pointing3.jpg')
 cv.imshow('Image', img)
 
 blank = np.zeros(img.shape, dtype='uint8')
