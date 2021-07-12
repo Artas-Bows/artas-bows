@@ -27,7 +27,7 @@ contours, heirarchies = cv.findContours(canny, cv.RETR_LIST, cv.CHAIN_APPROX_NON
 
 for idx, contour in enumerate(contours):
 	if len(contour) < 35:
-		contours.pop(idx)      
+		contours.pop(idx)
 
 #print(f'Contour: {contours[35]}')
 print(f'{len(contours)} contour(s) found!')
@@ -95,7 +95,7 @@ for contour in contours:
                 lowest = point
                 finalPoints.clear
                 finalPoints.append(point)
-        
+
     for point in finalPoints:
         bottomPoints.append(point)
     #Check for lowest point in contour and add that to bottompoints, probably don't need to sort can just go through each point and set variable for lowest in array     
@@ -119,7 +119,7 @@ for contour in contours:
 
 for point in bottomPoints:
     cv.circle(blank, tuple(point), 1, (255, 0, 255), -1)
-            
+
 print(f'Length of Array: {len(bottomPoints)}')
 
 # for contour in contours:
