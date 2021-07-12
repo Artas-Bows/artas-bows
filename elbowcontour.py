@@ -26,12 +26,12 @@ canny = cv.Canny(blur, 100, 125)
 contours, heirarchies = cv.findContours(canny, cv.RETR_LIST, cv.CHAIN_APPROX_NONE)
 
 for idx, contour in enumerate(contours):
-	if len(contour) < 35:
-		contours.pop(idx)
+    if len(contour) < 35: # 35 is the elbow.
+        contours.pop(idx)
 
 print(f'{len(contours)} contour(s) found!')
 
-cv.drawContours(blank, contours, -1, (0, 255, 0), 1) #35 is the elbow
+cv.drawContours(blank, contours, -1, (0, 255, 0), 1)
 
 cv.line(blank, (blank.shape[1] // 2, 0), (blank.shape[1] // 2, blank.shape[0]), (55, 55, 255), 1)
 
@@ -59,7 +59,8 @@ for contour in contours:
                 if pHigher:
                     pHigher = False
                     for x in reversed(range(0, i - 1)):
-                        if point[0][1] < contour[x][0][1]: #Checking if there's a point anywhere on the left that is higher, if there's a point that's lower, we break the loop
+                        #Checking if there's a point anywhere on the left that is higher, if there's a point that's lower, we break the loop
+                        if point[0][1] < contour[x][0][1]:
                             pHigher = False
                             break
                         elif point[0][1] > contour[x][0][1]:
@@ -83,8 +84,7 @@ for contour in contours:
                 finalPoints.append(point)
 
     for point in finalPoints:
-        bottomPoints.append(point)
-    #Check for lowest point in contour and add that to bottompoints, probably don't need to sort can just go through each point and set variable for lowest in array     
+        bottomPoints.append(point)  
 
 for point in bottomPoints:
     cv.circle(blank, tuple(point), 1, (255, 0, 255), -1)
