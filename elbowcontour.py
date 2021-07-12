@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 
-def rescaleFrame(frame, scale=0.75):
+def rescale_frame(frame, scale=0.75):
     width = int(frame.shape[1] * scale)
     height = int(frame.shape[0] * scale)
     dimensions = (width, height)
@@ -12,7 +12,7 @@ def rescaleFrame(frame, scale=0.75):
 img = cv.imread('Pictures/pointing3.jpg')
 cv.imshow('Image', img)
 
-resized_image = rescaleFrame(img, scale=0.4)
+resized_image = rescale_frame(img, scale=0.4)
 
 blank = np.zeros(resized_image.shape, dtype='uint8')
 
