@@ -1,27 +1,43 @@
 import cv2 as cv
 import numpy as np
-from operator import itemgetter
 
-img = cv.imread('Pictures/pointing3.jpg')
+def rescaleFrame(frame, scale = 0.75):
+    width = int(frame.shape[1] * scale)
+    height = int(frame.shape[0] * scale)
+    dimensions = (width,height)
+
+    return cv.resize(frame, dimensions, interpolation=cv.INTER_AREA)
+
+
+img = cv.imread('Picture/pointing3.jpg')
 cv.imshow('Image', img)
 
-blank = np.zeros(img.shape, dtype='uint8')
+resized_image = rescaleFrame(img, scale = 0.4)
 
-gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+blank = np.zeros(resized_image.shape, dtype='uint8')
 
-blur = cv.GaussianBlur(gray, (11,11), 0)
-#blur = cv.bilateralFilter(gray, 15, 45, 35)
+gray = cv.cvtColor(resized_image, cv.COLOR_BGR2GRAY)
+
+blur = cv.GaussianBlur(gray, (9,9), 0)
 cv.imshow('Blur', blur)
 
 canny = cv.Canny(blur, 100, 125)
 
 contours, heirarchies = cv.findContours(canny, cv.RETR_LIST, cv.CHAIN_APPROX_NONE)
+
+ind = 0
+for contour in contours:
+    if (len(contour)<35):
+        contours.pop(ind)
+    ind+=1
+        
+
 #print(f'Contour: {contours[35]}')
 print(f'{len(contours)} contour(s) found!')
 #print(f'PointY: {contours[1][1][0][1]}')
 
-#for i in range(36,37):
-#    cv.drawContours(blank, contours, i, (0,255,0), 2)
+#for i in range(8,10):
+#   cv.drawContours(blank, contours, i, (0,255,0), 2)
 
 cv.drawContours(blank, contours, -1, (0,255,0), 1) #35 is the elbow
 
@@ -33,11 +49,16 @@ cv.drawContours(blank, contours, -1, (0,255,0), 1) #35 is the elbow
 #             if((abs(point[0][1]-contour[i][0][1])>5) or (abs(point[0][1]-contour[i-2][0][1])>5) and (abs(point[0][0]-contour[i][0][0])>7) or (abs(point[0][0]-contour[i-2][0][0])>7)):
 #                 cv.circle(blank, point[0], 2, (255, 0,255), -1)
 
+cv.line(blank, (blank.shape[1]//2, 0),(blank.shape[1]//2, blank.shape[0]), (55, 55,255), 1)
+
 bottomPoints = []
+pointsInContour = []
 
 for contour in contours:
     i = 0
-    prevPoint = 0 
+    prevPoint = 0
+    pInContour = 0
+    lowest = [0, 0]
 
     for point in contour:
         i+=1
@@ -61,36 +82,31 @@ for contour in contours:
                             pHigher = True
                             break
             if(pHigher):
-                prevPoint = 1 #If a point is found that matches our criteria, the next x points will not even be checked so that we don't get point clusters
-                bottomPoints.append(point[0])
+                prevPoint = 3
+                if(pInContour == 0):
+                    lowest = point[0]
+                    pInContour=1
+                pointsInContour.append(point[0])
         else:
             prevPoint-=1
-
+    
+    finalPoints = []
+    if(lowest[0] != 0 and lowest[1] != 0):
+        finalPoints.append(lowest)
+        for point in pointsInContour:
+            if(lowest[1]>point[1]):
+                lowest = point
+                finalPoints.clear
+                finalPoints.append(point)
+        
+    for point in finalPoints:
+        bottomPoints.append(point)
+    #Check for lowest point in contour and add that to bottompoints, probably don't need to sort can just go through each point and set variable for lowest in array
 
             
     
-y_threshold = 40 #Distance between two points' y values must be greater than this
-x_threshold = 5  #Distance between two points' x values must be less than this
-
-bottomPoints.sort(key=itemgetter(0))
-
-newArray = []
-
-# i=0
-# for point in bottomPoints:
-#     i+=1
-#     if(i!=len(bottomPoints)):
-#         if((bottomPoints[i][0]-point[0]<x_threshold) and abs(bottomPoints[i][1]-point[1]>y_threshold)):
-#             newArray.append(point)
-#             newArray.append(bottomPoints[i])
-
-print(f'Length of New Array: {len(newArray)}')
-
-for point in newArray:
-    cv.circle(blank, point, 1, (255, 0,255), -1)
-
-
-print(f'Length of Array: {len(bottomPoints)}')
+#y_threshold = 10 #Distance between two points' y values must be greater than this
+#x_threshold = 5  #Distance between two points' x values must be less than this
 
 # i=0
 # for point in bottomPoints:
@@ -100,9 +116,17 @@ print(f'Length of Array: {len(bottomPoints)}')
 #             cv.circle(blank, point, 1, (255, 0,255), -1)
         
     
+# i=0
+# for point in bottomPoints:
+#     i+=1
+#     if(i!=len(bottomPoints)):
+#         if((abs(bottomPoints[i][1]-point[1])<10) and (abs(bottomPoints[i][0]-point[0])<5)):
+#             bottomPoints.pop(i)
 
+for point in bottomPoints:
+    cv.circle(blank, point, 1, (255, 0,255), -1)
             
-
+print(f'Length of Array: {len(bottomPoints)}')
 
 
 
