@@ -27,7 +27,7 @@ contours, heirarchies = cv.findContours(canny, cv.RETR_LIST, cv.CHAIN_APPROX_NON
 
 ind = 0
 for contour in contours:
-    if (len(contour) < 35):
+    if len(contour) < 35:
         contours.pop(ind)
     ind += 1
         
@@ -61,29 +61,29 @@ for contour in contours:
     lowest = [0, 0]
 
     for point in contour:
-        i+=1
-        if(prevPoint == 0):
+        i += 1
+        if prevPoint == 0:
             pHigher = False
-            if(i != len(contour) and i != 1): #Makes sure that the point isn't at the beginning or end of the array so it doesn't go out of bounds
+            if i != len(contour) and i != 1: #Makes sure that the point isn't at the beginning or end of the array so it doesn't go out of bounds
                 for x in range(i, len(contour)): #Here we check if there's a point anywhere on the right of the target point that is higher than the target point, if we encounter a lower point first then the loop breaks
-                    if (point[0][1] < contour[x][0][1]):
+                    if point[0][1] < contour[x][0][1]:
                         break
-                    elif (point[0][1] > contour[x][0][1]):
+                    elif point[0][1] > contour[x][0][1]:
                         pHigher = True
                         break
 
-                if (pHigher):
+                if pHigher:
                     pHigher = False
                     for x in reversed(range(0, i - 1)):
-                        if (point[0][1] < contour[x][0][1]): #Checking if there's a point anywhere on the left that is higher, if there's a point that's lower, we break the loop
+                        if point[0][1] < contour[x][0][1]: #Checking if there's a point anywhere on the left that is higher, if there's a point that's lower, we break the loop
                             pHigher = False
                             break
-                        elif (point[0][1] > contour[x][0][1]):
+                        elif point[0][1] > contour[x][0][1]:
                             pHigher = True
                             break
-            if (pHigher):
+            if pHigher:
                 prevPoint = 3
-                if (pInContour == 0):
+                if pInContour == 0:
                     lowest = point[0]
                     pInContour = 1
                 pointsInContour.append(point[0])
@@ -91,10 +91,10 @@ for contour in contours:
             prevPoint -= 1
     
     finalPoints = []
-    if(lowest[0] != 0 and lowest[1] != 0):
+    if lowest[0] != 0 and lowest[1] != 0:
         finalPoints.append(lowest)
         for point in pointsInContour:
-            if(lowest[1] > point[1]):
+            if lowest[1] > point[1]:
                 lowest = point
                 finalPoints.clear
                 finalPoints.append(point)
