@@ -25,12 +25,16 @@ canny = cv.Canny(blur, 100, 125)
 
 contours, heirarchies = cv.findContours(canny, cv.RETR_LIST, cv.CHAIN_APPROX_NONE)
 
+for idx, contour in enumerate(contours):
+	if len(contour) < 35:
+		contours.pop(idx)
+"""
 ind = 0
 for contour in contours:
     if len(contour) < 35:
         contours.pop(ind)
     ind += 1
-        
+"""        
 
 #print(f'Contour: {contours[35]}')
 print(f'{len(contours)} contour(s) found!')
